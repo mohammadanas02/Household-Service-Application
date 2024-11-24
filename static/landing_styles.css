@@ -1,0 +1,67 @@
+/* styles.css */
+body {
+    font-family: 'Roboto', Arial, sans-serif;
+    background-color: #0a3351; /* Light blue background */
+    color: #333;
+    text-align: center;
+    padding: 20px;
+}
+
+.my-box {
+    background-color: #abc2cd; /* Light pink box */
+    border: 5px solid #000000; /* Bright orange border */
+    border-radius: 10px;
+    width: 400px;
+    margin: 50px auto; /* Center the box */
+    padding: 20px;
+    /* box-shadow: 15px 15px 15px #e0d6d6; Shadow for a pop-out effect */
+}
+
+h1 {
+    font-size: 30px;
+    color: #000000; /* Hot pink text */
+    text-shadow: 2px  #474544; /* Glowy text shadow */
+}
+
+form {
+    margin: 20px 0;
+}
+
+label {
+    display: block;
+    margin: 10px 0 5px;
+    font-size: 16px;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+    width: 90%;
+    padding: 10px;
+    margin: 5px 0 15px;
+    border: 2px solid #000000; /* Sky blue border */
+    border-radius: 10px;
+    font-size: 16px;
+}
+
+input[type="submit"] {
+    background-color: #0a3351; /* Bright orange button */
+    color: white;
+    font-size: 18px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+
+a {
+    color: #f72201; /* Hot pink links */
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+

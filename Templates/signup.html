@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Signup for Household Service</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='landing_styles.css') }}">
+</head>
+
+<body>
+    <div class="my-box">
+        <h1>Household Service Signup</h1>
+        <form method="POST" action="{{ url_for('signup') }}">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+            
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        
+            <label for="role">Register as:</label>
+            <select id="role" name="role">
+                <option value="customer">Customer</option>
+                <option value="professional">Service Professional</option>
+                <option value="admin">Admin</option>
+            </select>
+        
+            <button type="submit">Sign Up</button>
+        </form>
+        <p>Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Services</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Search Results for "{{ query }}"</h1>
+        <nav>
+            <a href="{{ url_for('customer_dashboard', curr_login_id=curr_login_id) }}">Back to Dashboard</a>
+        </nav>
+    </header>
+    <main>
+        {% if services %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Service Name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for service in services %}
+                <tr>
+                    <td>{{ service.name }}</td>
+                    <td>{{ service.description }}</td>
+                    <td>{{ service.price }}</td>
+                    <td>
+                        <a href="{{ url_for('create_service_request', curr_login_id=curr_login_id, service_id=service.id) }}">Request Service</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No services found for "{{ query }}".</p>
+        {% endif %}
+    </main>
+</body>
+</html>

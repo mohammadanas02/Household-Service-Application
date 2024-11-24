@@ -1,0 +1,28 @@
+<!-- create_service.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Service</title>
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+    <h1>Create a New Service</h1>
+    <form method="POST">
+        <label for="name">Service Name</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="price">Price</label>
+        <input type="text" id="price" name="price" required>
+
+        <label for="description">Description</label>
+        <textarea id="description" name="description" required></textarea>
+
+        <button type="submit">Create Service</button>
+    </form>
+
+    <a href="{{ url_for('admin_dashboard', curr_login_id=curr_login_id) }}">Back to Dashboard</a>
+</body>
+</html>
+

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Service Request</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Request Service: {{ service.name }}</h1>
+        <nav>
+            <a href="{{ url_for('customer_dashboard', curr_login_id=curr_login_id) }}">Back to Dashboard</a>
+        </nav>
+    </header>
+    <main>
+        <form action="{{ url_for('create_service_request', curr_login_id=curr_login_id, service_id=service.id) }}" method="POST">
+            <label for="remarks">Remarks:</label>
+            <textarea id="remarks" name="remarks" placeholder="Add any specific details or requirements here"></textarea>
+            <button type="submit">Submit Request</button>
+        </form>
+    </main>
+</body>
+</html>

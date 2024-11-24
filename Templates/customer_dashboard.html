@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Welcome, {{ user.name }}</h1>
+        <nav>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </nav>
+    </header>
+    <main>
+        <h2>Your Service Requests</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Service Name</th>
+                    <th>Remarks</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for request in service_requests %}
+                <tr>
+                    <td>{{ request.service.name }}</td>
+                    <td>{{ request.remarks }}</td>
+                    <td>
+                        <!-- Display the current status of the request -->
+                        {% if request.status == 'requested' %}
+                        <span class="badge bg-warning">Requested</span>
+                        {% elif request.status == 'assigned' %}
+                        <span class="badge bg-info">Assigned to Professional</span>
+                        {% elif request.status == 'closed' %}
+                        <span class="badge bg-success">Closed</span>
+                        {% else %}
+                        <span class="badge bg-secondary">Unknown</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <!-- Actions based on request status -->
+                        {% if request.status == 'requested' %}
+                        <a href="{{ url_for('close_service_request', curr_login_id=curr_login_id, request_id=request.id) }}" class="btn btn-danger">Close Request</a>
+                        {% elif request.status == 'assigned' %}
+                        <span class="text-muted">Waiting for completion</span>
+                        {% elif request.status == 'closed' %}
+                        <span class="text-muted">Completed</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2>Available Services</h2>
+        <form action="{{ url_for('search_services', curr_login_id=curr_login_id) }}" method="POST">
+            <input type="text" name="search_query" placeholder="Search by name or location pin code" required>
+            <button type="submit">Search</button>
+        </form>
+        <table>
+            <thead>
+                <tr>
+                    <th>Service Name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for service in services %}
+                <tr>
+                    <td>{{ service.name }}</td>
+                    <td>{{ service.description }}</td>
+                    <td>{{ service.price }}</td>
+                    <td>
+                        <a href="{{ url_for('create_service_request', curr_login_id=curr_login_id, service_id=service.id) }}">Request Service</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </main>
+</body>
+</html>
+

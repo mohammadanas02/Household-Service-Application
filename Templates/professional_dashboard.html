@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Professional Dashboard</title>
+</head>
+<body>
+    <h1>Welcome</h1>
+    
+    <!-- Open Service Requests -->
+    <h2>Open Service Requests</h2>
+    <table>
+        <tr>
+            <th>Request ID</th>
+            <th>Service</th>
+            <th>Customer</th>
+            <th>Actions</th>
+        </tr>
+        {% for request in open_requests %}
+        <tr>
+            <td>{{ request.id }}</td>
+            <td>{{ request.service.name }}</td>
+            <td>{{ request.customer.name }}</td>
+            <td>
+                <form action="{{ url_for('accept_service_request', curr_login_id=curr_login_id, request_id=request.id) }}" method="post">
+                    <button type="submit">Accept</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <!-- Assigned Service Requests -->
+    <h2>Assigned Service Requests</h2>
+    <table>
+        <tr>
+            <th>Request ID</th>
+            <th>Service</th>
+            <th>Customer</th>
+            <th>Status</th>
+        </tr>
+        {% for request in assigned_requests %}
+        <tr>
+            <td>{{ request.id }}</td>
+            <td>{{ request.service.name }}</td>
+            <td>{{ request.customer.name }}</td>
+            <td>{{ request.status }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
