@@ -207,7 +207,7 @@ def disapprove_professional(curr_login_id, user_id):
     return redirect(url_for('admin_dashboard', curr_login_id=user.id))
 
 
-# -------------------------------- Customer Section -------------------------------- #
+# --------------------------------------- Customer Section ----------------------------------------- #
 
 @app.route('/customer_dashboard/<int:curr_login_id>', methods=['GET'])
 def customer_dashboard(curr_login_id):
@@ -221,7 +221,7 @@ def customer_dashboard(curr_login_id):
     # Fetch all service requests related to the current customer, including their current status
     service_requests = ServiceRequest.query.filter_by(customer_id=curr_login_id).all()
 
-    return render_template('customer_dashboard.html', 
+    return render_template('customer_dashboard.html',
                            user=user, 
                            services=services, 
                            service_requests=service_requests, 
@@ -273,39 +273,66 @@ def create_service_request(curr_login_id, service_id):
                            service=service, 
                            curr_login_id=curr_login_id)
 
-@app.route('/close_service_request/<int:curr_login_id>/<int:request_id>', methods=['POST'])
+@app.route('/close_service_request/<int:curr_login_id>/<int:request_id>', methods=['GET', 'POST'])
 def close_service_request(curr_login_id, request_id):
-    service_request = ServiceRequest.query.get(request_id)
-    if not service_request or service_request.customer_id != curr_login_id:
+    customer = User.query.get(curr_login_id)
+    if not customer or customer.role != 'customer':
         flash('Unauthorized access', 'danger')
         return redirect(url_for('logout'))
 
-    service_request.status = 'closed'
-    service_request.date_of_completion = datetime.now()
-    db.session.commit()
-    flash('Service request closed successfully.', 'success')
-    return redirect(url_for('customer_dashboard', curr_login_id=curr_login_id))
+    service_request = ServiceRequest.query.get(request_id)
+    if not service_request or service_request.customer_id != curr_login_id or service_request.status != 'completed':
+        flash('Service request not found or cannot be closed.', 'danger')
+        return redirect(url_for('customer_dashboard', curr_login_id=curr_login_id))
+
+    if request.method == 'POST':
+        # Capture remark and rating
+        remark = request.form.get('remark')
+        rating = int(request.form.get('rating', 0))  # Ensure rating is numeric
+
+        # Validate the rating
+        if rating < 1 or rating > 5:
+            flash('Rating must be between 1 and 5.', 'danger')
+            return redirect(url_for('close_service_request', curr_login_id=curr_login_id, request_id=request_id))
+
+        # Update the service request with remark, rating, and status
+        service_request.status = 'closed'
+        service_request.remark = remark
+        service_request.rating = rating
+        db.session.commit()
+        flash('Service request closed successfully with feedback!', 'success')
+        return redirect(url_for('customer_dashboard', curr_login_id=curr_login_id))
+
+    # Render the close service request form
+    return render_template('close_service_request.html', service_request=service_request, curr_login_id=curr_login_id)
+
+
 
 
 
 # -------------------------------- Service Professional Section -------------------------------- #
 
-# Route for Professional Dashboard
-@app.route('/professional_dashboard/<int:curr_login_id>', methods=['GET', 'POST'])
+@app.route('/professional_dashboard/<int:curr_login_id>', methods=['GET'])
 def professional_dashboard(curr_login_id):
+    # Fetch the professional user
     professional = User.query.get(curr_login_id)
     if not professional or professional.role != 'professional':
         flash('Unauthorized access', 'danger')
         return redirect(url_for('logout'))
 
-    # Fetch all open service requests (status: 'requested') and those assigned to the professional
+    # Fetch service requests
     open_requests = ServiceRequest.query.filter_by(status='requested').all()
-    assigned_requests = ServiceRequest.query.filter_by(professional_id=curr_login_id).all()
+    assigned_requests = ServiceRequest.query.filter_by(status='assigned', professional_id=curr_login_id).all()
+    closed_requests = ServiceRequest.query.filter_by(status='closed', professional_id=curr_login_id).all()
 
-    return render_template('professional_dashboard.html', 
-                           open_requests=open_requests, 
+    # Pass the professional object to the template
+    return render_template('professional_dashboard.html',
+                           professional=professional,
+                           open_requests=open_requests,
                            assigned_requests=assigned_requests,
+                           closed_requests=closed_requests,
                            curr_login_id=curr_login_id)
+
 
 
 @app.route('/accept_service_request/<int:curr_login_id>/<int:request_id>', methods=['POST'])
@@ -327,6 +354,27 @@ def accept_service_request(curr_login_id, request_id):
 
     # Redirect back to the professional dashboard instead of a separate service request view page
     return redirect(url_for('professional_dashboard', curr_login_id=curr_login_id))
+
+@app.route('/mark_service_completed/<int:curr_login_id>/<int:request_id>', methods=['POST'])
+def mark_service_completed(curr_login_id, request_id):
+    professional = User.query.get(curr_login_id)
+    if not professional or professional.role != 'professional':
+        flash('Unauthorized access', 'danger')
+        return redirect(url_for('logout'))
+
+    service_request = ServiceRequest.query.get(request_id)
+    if service_request and service_request.status == 'assigned' and service_request.professional_id == curr_login_id:
+        # Update the status of the service request to 'completed'
+        service_request.status = 'completed'
+        service_request.date_of_completion = datetime.now()
+        db.session.commit()
+        flash('Service marked as completed successfully!', 'success')
+    else:
+        flash('Service request not found or cannot be marked as completed.', 'danger')
+
+    # Redirect back to the professional dashboard
+    return redirect(url_for('professional_dashboard', curr_login_id=curr_login_id))
+
 
 
 

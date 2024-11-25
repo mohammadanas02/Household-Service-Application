@@ -46,12 +46,12 @@ class ServiceProfessional(db.Model):
 class ServiceRequest(db.Model):
     __tablename__ = 'service_requests'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    customer_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # Assuming User with role 'customer'
+    customer_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False) 
     professional_id = db.Column(db.Integer, db.ForeignKey('service_professionals.id'), nullable=True)
     service_id = db.Column(db.Integer, db.ForeignKey('services.id'), nullable=False)
     date_of_request = db.Column(db.DateTime, default=func.now())
-    date_of_completion = db.Column(db.DateTime)
-    status = db.Column(db.String(20), default='requested')  # Status of the request
+    date_of_completion = db.Column(db.DateTime, nullable=True)
+    status = db.Column(db.String(20), default='requested')  
     remarks = db.Column(db.Text)
 
 class AdminAction(db.Model):

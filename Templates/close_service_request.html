@@ -1,0 +1,13 @@
+<h2>Close Service Request</h2>
+<form action="{{ url_for('close_service_request', curr_login_id=curr_login_id, request_id=service_request.id) }}" method="POST">
+    <div class="form-group">
+        <label for="remark">Remark</label>
+        <textarea name="remark" id="remark" class="form-control" rows="3" placeholder="Write your feedback here..." required></textarea>
+    </div>
+    <div class="form-group">
+        <label for="rating">Rating (1-5)</label>
+        <input type="number" name="rating" id="rating" class="form-control" min="1" max="5" placeholder="Rate the service (1-5)" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+    <a href="{{ url_for('customer_dashboard', curr_login_id=curr_login_id) }}" class="btn btn-secondary">Cancel</a>
+</form>

@@ -4,21 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Service Request</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <header>
-        <h1>Request Service: {{ service.name }}</h1>
-        <nav>
-            <a href="{{ url_for('customer_dashboard', curr_login_id=curr_login_id) }}">Back to Dashboard</a>
-        </nav>
-    </header>
-    <main>
-        <form action="{{ url_for('create_service_request', curr_login_id=curr_login_id, service_id=service.id) }}" method="POST">
+    <h1>Create Service Request for {{ service.name }}</h1>
+
+    <!-- Service Request Form -->
+    <form method="POST">
+        <div>
             <label for="remarks">Remarks:</label>
-            <textarea id="remarks" name="remarks" placeholder="Add any specific details or requirements here"></textarea>
-            <button type="submit">Submit Request</button>
-        </form>
-    </main>
+            <textarea id="remarks" name="remarks" required></textarea>
+        </div>
+
+        <!-- New fields for contact number and pin code -->
+        <div>
+            <label for="contact_number">Contact Number:</label>
+            <input type="text" id="contact_number" name="contact_number" required>
+        </div>
+        <div>
+            <label for="pin_code">Pin Code:</label>
+            <input type="text" id="pin_code" name="pin_code" required>
+        </div>
+
+        <div>
+            <button type="submit">Create Request</button>
+        </div>
+    </form>
 </body>
 </html>
+

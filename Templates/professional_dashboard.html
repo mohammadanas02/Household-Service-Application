@@ -4,22 +4,31 @@
     <title>Professional Dashboard</title>
 </head>
 <body>
-    <h1>Welcome</h1>
-    
+    <h1>Welcome, {{ professional.username }}</h1>
+    <nav>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+
     <!-- Open Service Requests -->
     <h2>Open Service Requests</h2>
-    <table>
+    <table border="1">
         <tr>
             <th>Request ID</th>
             <th>Service</th>
             <th>Customer</th>
             <th>Actions</th>
+            <th>Contact Number</th>
+            <th>Pin Code</th>
+            <th>Price</th>
         </tr>
         {% for request in open_requests %}
         <tr>
             <td>{{ request.id }}</td>
             <td>{{ request.service.name }}</td>
-            <td>{{ request.customer.name }}</td>
+            <td>{{ request.customer.username }}</td>
+            <td>{{ request.contact_number }}</td>
+            <td>{{ request.pin_code }}</td>
+            <td>{{ request.service.price }}</td>
             <td>
                 <form action="{{ url_for('accept_service_request', curr_login_id=curr_login_id, request_id=request.id) }}" method="post">
                     <button type="submit">Accept</button>
@@ -27,25 +36,67 @@
             </td>
         </tr>
         {% endfor %}
+        {% if not open_requests %}
+        <tr>
+            <td colspan="4">No open service requests available.</td>
+        </tr>
+        {% endif %}
     </table>
 
     <!-- Assigned Service Requests -->
     <h2>Assigned Service Requests</h2>
-    <table>
+    <table border="1">
         <tr>
             <th>Request ID</th>
             <th>Service</th>
             <th>Customer</th>
+            <th>Contact Number</th>
+            <th>Pin Code</th>
             <th>Status</th>
+            <th>Price</th> <!-- Added Price column -->
         </tr>
         {% for request in assigned_requests %}
         <tr>
             <td>{{ request.id }}</td>
             <td>{{ request.service.name }}</td>
-            <td>{{ request.customer.name }}</td>
+            <td>{{ request.customer.username }}</td>
+            <td>{{ request.contact_number }}</td> <!-- Display contact number -->
+            <td>{{ request.pin_code }}</td> <!-- Display pin code -->
             <td>{{ request.status }}</td>
+            <td>{{ request.service.price }}</td> <!-- Display price -->
         </tr>
         {% endfor %}
+        {% if not assigned_requests %}
+        <tr>
+            <td colspan="7">No assigned service requests available.</td>
+        </tr>
+        {% endif %}
+    </table>
+
+    <!-- Closed Service Requests -->
+    <h2>Closed Service Requests</h2>
+    <table border="1">
+        <tr>
+            <th>Request ID</th>
+            <th>Service</th>
+            <th>Customer</th>
+            <th>Date of Completion</th>
+        </tr>
+        {% for request in closed_requests %}
+        <tr>
+            <td>{{ request.id }}</td>
+            <td>{{ request.service.name }}</td>
+            <td>{{ request.customer.username }}</td>
+            <td>{{ request.date_of_completion }}</td>
+        </tr>
+        {% endfor %}
+        {% if not closed_requests %}
+        <tr>
+            <td colspan="4">No closed service requests available.</td>
+        </tr>
+        {% endif %}
     </table>
 </body>
 </html>
+
+
