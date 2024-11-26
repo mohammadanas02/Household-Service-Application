@@ -16,18 +16,18 @@
             <th>Request ID</th>
             <th>Service</th>
             <th>Customer</th>
-            <th>Actions</th>
             <th>Contact Number</th>
             <th>Pin Code</th>
             <th>Price</th>
+            <th>Actions</th>
         </tr>
         {% for request in open_requests %}
         <tr>
             <td>{{ request.id }}</td>
             <td>{{ request.service.name }}</td>
             <td>{{ request.customer.username }}</td>
-            <td>{{ request.contact_number }}</td>
-            <td>{{ request.pin_code }}</td>
+            <td>{{ request.customer.contact_number }}</td>
+            <td>{{ request.customer.pin_code }}</td>
             <td>{{ request.service.price }}</td>
             <td>
                 <form action="{{ url_for('accept_service_request', curr_login_id=curr_login_id, request_id=request.id) }}" method="post">
@@ -38,7 +38,7 @@
         {% endfor %}
         {% if not open_requests %}
         <tr>
-            <td colspan="4">No open service requests available.</td>
+            <td colspan="7">No open service requests available.</td>
         </tr>
         {% endif %}
     </table>
@@ -53,22 +53,28 @@
             <th>Contact Number</th>
             <th>Pin Code</th>
             <th>Status</th>
-            <th>Price</th> <!-- Added Price column -->
+            <th>Price</th>
+            <th>Actions</th>
         </tr>
         {% for request in assigned_requests %}
         <tr>
             <td>{{ request.id }}</td>
             <td>{{ request.service.name }}</td>
             <td>{{ request.customer.username }}</td>
-            <td>{{ request.contact_number }}</td> <!-- Display contact number -->
-            <td>{{ request.pin_code }}</td> <!-- Display pin code -->
+            <td>{{ request.customer.contact_number }}</td>
+            <td>{{ request.customer.pin_code }}</td>
             <td>{{ request.status }}</td>
-            <td>{{ request.service.price }}</td> <!-- Display price -->
+            <td>{{ request.service.price }}</td>
+            <td>
+                <form action="{{ url_for('mark_service_completed', curr_login_id=curr_login_id, request_id=request.id) }}" method="post">
+                    <button type="submit">Mark as Completed</button>
+                </form>
+            </td>
         </tr>
         {% endfor %}
         {% if not assigned_requests %}
         <tr>
-            <td colspan="7">No assigned service requests available.</td>
+            <td colspan="8">No assigned service requests available.</td>
         </tr>
         {% endif %}
     </table>
@@ -81,6 +87,8 @@
             <th>Service</th>
             <th>Customer</th>
             <th>Date of Completion</th>
+            <th>Feedback</th>
+            <th>Rating</th>
         </tr>
         {% for request in closed_requests %}
         <tr>
@@ -88,15 +96,15 @@
             <td>{{ request.service.name }}</td>
             <td>{{ request.customer.username }}</td>
             <td>{{ request.date_of_completion }}</td>
+            <td>{{ request.remark }}</td>
+            <td>{{ request.rating }}</td>
         </tr>
         {% endfor %}
         {% if not closed_requests %}
         <tr>
-            <td colspan="4">No closed service requests available.</td>
+            <td colspan="6">No closed service requests available.</td>
         </tr>
         {% endif %}
     </table>
 </body>
 </html>
-
-
