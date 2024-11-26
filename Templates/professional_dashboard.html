@@ -1,110 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='professional_dashboard.css') }}"> -->
     <title>Professional Dashboard</title>
 </head>
 <body>
-    <h1>Welcome, {{ professional.username }}</h1>
-    <nav>
-        <a href="{{ url_for('logout') }}">Logout</a>
-    </nav>
 
-    <!-- Open Service Requests -->
-    <h2>Open Service Requests</h2>
-    <table border="1">
-        <tr>
-            <th>Request ID</th>
-            <th>Service</th>
-            <th>Customer</th>
-            <th>Contact Number</th>
-            <th>Pin Code</th>
-            <th>Price</th>
-            <th>Actions</th>
-        </tr>
-        {% for request in open_requests %}
-        <tr>
-            <td>{{ request.id }}</td>
-            <td>{{ request.service.name }}</td>
-            <td>{{ request.customer.username }}</td>
-            <td>{{ request.customer.contact_number }}</td>
-            <td>{{ request.customer.pin_code }}</td>
-            <td>{{ request.service.price }}</td>
-            <td>
-                <form action="{{ url_for('accept_service_request', curr_login_id=curr_login_id, request_id=request.id) }}" method="post">
-                    <button type="submit">Accept</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-        {% if not open_requests %}
-        <tr>
-            <td colspan="7">No open service requests available.</td>
-        </tr>
-        {% endif %}
-    </table>
+    <div class="sidebar">
+        <!-- Logout section -->
+        <nav>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </nav>
+        <!-- Home Section -->
+        <nav>
+            <a href="{{ url_for('professional_dashboard', curr_login_id=curr_login_id) }}">Home</a>
+        </nav>
+    </div>
 
-    <!-- Assigned Service Requests -->
-    <h2>Assigned Service Requests</h2>
-    <table border="1">
-        <tr>
-            <th>Request ID</th>
-            <th>Service</th>
-            <th>Customer</th>
-            <th>Contact Number</th>
-            <th>Pin Code</th>
-            <th>Status</th>
-            <th>Price</th>
-            <th>Actions</th>
-        </tr>
-        {% for request in assigned_requests %}
-        <tr>
-            <td>{{ request.id }}</td>
-            <td>{{ request.service.name }}</td>
-            <td>{{ request.customer.username }}</td>
-            <td>{{ request.customer.contact_number }}</td>
-            <td>{{ request.customer.pin_code }}</td>
-            <td>{{ request.status }}</td>
-            <td>{{ request.service.price }}</td>
-            <td>
-                <form action="{{ url_for('mark_service_completed', curr_login_id=curr_login_id, request_id=request.id) }}" method="post">
-                    <button type="submit">Mark as Completed</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-        {% if not assigned_requests %}
-        <tr>
-            <td colspan="8">No assigned service requests available.</td>
-        </tr>
-        {% endif %}
-    </table>
+    <div class="content">
+        <h1>Welcome, {{ professional.username }}</h1>
 
-    <!-- Closed Service Requests -->
-    <h2>Closed Service Requests</h2>
-    <table border="1">
-        <tr>
-            <th>Request ID</th>
-            <th>Service</th>
-            <th>Customer</th>
-            <th>Date of Completion</th>
-            <th>Feedback</th>
-            <th>Rating</th>
-        </tr>
-        {% for request in closed_requests %}
-        <tr>
-            <td>{{ request.id }}</td>
-            <td>{{ request.service.name }}</td>
-            <td>{{ request.customer.username }}</td>
-            <td>{{ request.date_of_completion }}</td>
-            <td>{{ request.remark }}</td>
-            <td>{{ request.rating }}</td>
-        </tr>
-        {% endfor %}
-        {% if not closed_requests %}
-        <tr>
-            <td colspan="6">No closed service requests available.</td>
-        </tr>
-        {% endif %}
-    </table>
+        <!-- Open Service Requests -->
+        <h2>Open Service Requests</h2>
+        <table border="1">
+            <tr>
+                <th>Request ID</th>
+                <th>Service</th>
+                <th>Customer</th>
+                <th>Contact Number</th>
+                <th>Pin Code</th>
+                <th>Price</th>
+                <th>Remarks</th>
+                <th>Actions</th>
+            </tr>
+            {% for request in open_requests %}
+            <tr>
+                <td>{{ request.id }}</td>
+                <td>{{ request.service.name }}</td>
+                <td>{{ request.customer.username }}</td>
+                <td>{{ request.customer.contact_number }}</td>
+                <td>{{ request.customer.pin_code }}</td>
+                <td>{{ request.service.price }}</td>
+                <td>{{ request.remarks }}</td>
+                <td>
+                    <form action="{{ url_for('accept_service_request', curr_login_id=curr_login_id, request_id=request.id) }}" method="post">
+                        <button type="submit">Accept</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            {% if not open_requests %}
+            <tr>
+                <td colspan="7">No open service requests available.</td>
+            </tr>
+            {% endif %}
+        </table>
+
+        <!-- Assigned Service Requests -->
+        <h2>Assigned Service Requests</h2>
+        <table border="1">
+            <tr>
+                <th>Request ID</th>
+                <th>Service</th>
+                <th>Customer</th>
+                <th>Contact Number</th>
+                <th>Pin Code</th>
+                <th>Status</th>
+                <th>Price</th>
+                <th>Actions</th>
+            </tr>
+            {% for request in assigned_requests %}
+            <tr>
+                <td>{{ request.id }}</td>
+                <td>{{ request.service.name }}</td>
+                <td>{{ request.customer.username }}</td>
+                <td>{{ request.customer.contact_number }}</td>
+                <td>{{ request.customer.pin_code }}</td>
+                <td>{{ request.status }}</td>
+                <td>{{ request.service.price }}</td>
+                <td>
+                    <form action="{{ url_for('mark_service_completed', curr_login_id=curr_login_id, request_id=request.id) }}" method="post">
+                        <button type="submit">Verify</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            {% if not assigned_requests %}
+            <tr>
+                <td colspan="8">No assigned service requests available.</td>
+            </tr>
+            {% endif %}
+        </table>
+
+        <!-- Closed Service Requests -->
+        <h2>Closed Service Requests</h2>
+        <table border="1">
+            <tr>
+                <th>Request ID</th>
+                <th>Service</th>
+                <th>Customer</th>
+                <th>Date of Completion</th>
+                <th>Feedback</th>
+                <th>Rating</th>
+            </tr>
+            {% for request in closed_requests %}
+            <tr>
+                <td>{{ request.id }}</td>
+                <td>{{ request.service.name }}</td>
+                <td>{{ request.customer.username }}</td>
+                <td>{{ request.date_of_completion }}</td>
+                <td>{{ request.remark }}</td>
+                <td>{{ request.rating }}</td>
+            </tr>
+            {% endfor %}
+            {% if not closed_requests %}
+            <tr>
+                <td colspan="6">No closed service requests available.</td>
+            </tr>
+            {% endif %}
+        </table>
+    </div>
+
 </body>
 </html>
