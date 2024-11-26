@@ -3,6 +3,11 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from Model.model import *
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime
+import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
+import io
+import base64
+from flask import Response
 
 
 app = Flask(__name__)
@@ -105,10 +110,48 @@ def admin_dashboard(curr_login_id):
                         services=services,
                         data=data)
 
+
+import matplotlib.pyplot as plt
+import io
+import base64
+from matplotlib.ticker import MaxNLocator
+
 @app.route('/admin/stats/<int:curr_login_id>', methods=['GET'])
 def admin_stats(curr_login_id):
-    # Your logic for the admin_stats view
-    return render_template('admin_stats.html', curr_login_id=curr_login_id)
+    # Ensure the logged-in user is an admin
+    admin_user = User.query.get(curr_login_id)
+    if not admin_user or admin_user.role != 'admin':
+        flash('Unauthorized access', 'danger')
+        return redirect(url_for('logout'))
+
+    # Fetch services
+    services = Service.query.all()
+
+    # Data preparation for bar graph
+    service_names = [service.name for service in services]
+    prices = [service.price for service in services]
+
+    # Create a column graph (vertical bars)
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.bar(service_names, prices, color='skyblue')
+    ax.set_xlabel('Service Name')
+    ax.set_ylabel('Price')
+    ax.set_title('Price vs Service Name')
+
+    # Rotate x-axis labels for readability
+    plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
+
+    # Save the plot to a BytesIO object to render it in the HTML
+    img = io.BytesIO()
+    plt.savefig(img, format='png')
+    img.seek(0)
+
+    # Encode the image to a base64 string
+    plot_url = base64.b64encode(img.getvalue()).decode('utf8')
+
+    # Pass the plot_url to the template
+    return render_template('admin_stats.html', plot_url=plot_url)
 
 
 @app.route('/create_service/<int:curr_login_id>', methods=['GET', 'POST'])
@@ -275,6 +318,34 @@ def create_service_request(curr_login_id, service_id):
                            service=service, 
                            curr_login_id=curr_login_id)
 
+@app.route('/edit_service_request/<int:curr_login_id>/<int:request_id>', methods=['GET', 'POST'])
+def edit_service_request(curr_login_id, request_id):
+    customer = User.query.get(curr_login_id)
+    if not customer or customer.role != 'customer':
+        flash('Unauthorized access', 'danger')
+        return redirect(url_for('logout'))
+
+    service_request = ServiceRequest.query.get(request_id)
+    if not service_request or service_request.customer_id != curr_login_id:
+        flash('Service request not found or you do not have permission to edit it.', 'danger')
+        return redirect(url_for('customer_dashboard', curr_login_id=curr_login_id))
+
+    if request.method == 'POST':
+        # Update the service request remarks if provided
+        remarks = request.form['remarks']
+        service_request.remarks = remarks
+        db.session.commit()
+        flash('Service request updated successfully!', 'success')
+        return redirect(url_for('customer_dashboard', curr_login_id=curr_login_id))
+
+    return render_template('edit_service_request.html', 
+                           service_request=service_request, 
+                           curr_login_id=curr_login_id)
+
+
+
+
+
 @app.route('/close_service_request/<int:curr_login_id>/<int:request_id>', methods=['GET', 'POST'])
 def close_service_request(curr_login_id, request_id):
     customer = User.query.get(curr_login_id)
@@ -307,7 +378,6 @@ def close_service_request(curr_login_id, request_id):
 
     # Render the close service request form
     return render_template('close_service_request.html', service_request=service_request, curr_login_id=curr_login_id)
-
 
 
 
@@ -376,10 +446,6 @@ def mark_service_completed(curr_login_id, request_id):
 
     # Redirect back to the professional dashboard
     return redirect(url_for('professional_dashboard', curr_login_id=curr_login_id))
-
-
-
-
 
 
 
