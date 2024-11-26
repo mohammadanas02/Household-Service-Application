@@ -1,35 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Service Request</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-</head>
-<body>
-    <header>
-        <h1>Edit Service Request for "{{ service.name }}"</h1>
-        <nav>
-            <a href="{{ url_for('customer_dashboard', curr_login_id=curr_login_id) }}">Back to Dashboard</a>
-        </nav>
-    </header>
-    <main>
-        <form action="{{ url_for('edit_service_request', curr_login_id=curr_login_id, service_request_id=service_request.id) }}" method="POST">
-            <label for="date_of_request">Date of Request:</label>
-            <input type="date" id="date_of_request" name="date_of_request" value="{{ service_request.date_of_request }}" required>
+<form method="POST">
+    <div class="form-group">
+        <label for="remarks">Remarks</label>
+        <textarea id="remarks" name="remarks" class="form-control">{{ service_request.remarks }}</textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Update Service Request</button>
+</form>
 
-            <label for="service_status">Status:</label>
-            <select id="service_status" name="service_status" required>
-                <option value="requested" {% if service_request.service_status == 'requested' %}selected{% endif %}>Requested</option>
-                <option value="assigned" {% if service_request.service_status == 'assigned' %}selected{% endif %}>Assigned</option>
-                <option value="closed" {% if service_request.service_status == 'closed' %}selected{% endif %}>Closed</option>
-            </select>
 
-            <label for="remarks">Remarks:</label>
-            <textarea id="remarks" name="remarks" placeholder="Update remarks if needed">{{ service_request.remarks }}</textarea>
 
-            <button type="submit">Save Changes</button>
-        </form>
-    </main>
-</body>
-</html>
+
