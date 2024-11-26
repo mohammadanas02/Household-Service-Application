@@ -11,6 +11,7 @@ class User(db.Model):
     password = db.Column(db.String(), nullable=False)
     role = db.Column(db.String(20), nullable=False, default='customer')  # 'admin', 'customer', or 'professional'
     status = db.Column(db.String(80), default='pending')
+    blocked = db.Column(db.Boolean, default=False)
 
     # Relationships
     service_professionals = db.relationship('ServiceProfessional', backref='user', lazy=True)

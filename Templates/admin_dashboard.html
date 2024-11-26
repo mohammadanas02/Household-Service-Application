@@ -5,51 +5,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <style>
-        /* Add your custom styling here */
-    </style>
 </head>
 
 <body>
-    <div class="box">
+    <div>
         <!-- Logout Section -->
-        <div class="logout">
-            <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+        <div>
+            <a href="{{ url_for('logout') }}">Logout</a>
         </div>
         
         <!-- Admin Stats Section -->
-        <div class="east">
-            <a href="{{ url_for('admin_stats', curr_login_id=curr_login_id) }}" class="eas-btn">View Statistics</a>
+        <div>
+            <a href="{{ url_for('admin_stats', curr_login_id=curr_login_id) }}">View Statistics</a>
         </div>
         
         <h1>Hi {{ name }}! Welcome to the Admin Dashboard</h1>
         
         <!-- Users Management Section -->
-        <div class="section">
+        <div>
             <h2>Users Management</h2>
             
             <!-- Customers Section -->
             <h3>Customers</h3>
-            <table>
+            <table border="1">
                 <tr>
                     <th>Name</th>
                     <th>Email</th>
+                    <th>Status</th>
                     <th>Actions</th>
                 </tr>
                 {% for customer in customers %}
                 <tr>
                     <td>{{ customer.username }}</td>
                     <td>{{ customer.email }}</td>
+                    <td>{{ 'Blocked' if customer.blocked else 'Active' }}</td>
                     <td>
-                        <!-- Actions can be expanded based on requirements -->
+                        {% if customer.blocked %}
+                        <form action="{{ url_for('unblock_user', curr_login_id=curr_login_id, user_id=customer.id) }}" method="POST">
+                            <button type="submit">Unblock</button>
+                        </form>
+                        {% else %}
+                        <form action="{{ url_for('block_user', curr_login_id=curr_login_id, user_id=customer.id) }}" method="POST">
+                            <button type="submit">Block</button>
+                        </form>
+                        {% endif %}
                     </td>
                 </tr>
                 {% endfor %}
             </table>
-            
+
             <!-- Service Professionals Section -->
             <h3>Service Professionals</h3>
-            <table>
+            <table border="1">
                 <tr>
                     <th>Name</th>
                     <th>Email</th>
@@ -60,11 +67,16 @@
                 <tr>
                     <td>{{ professional.username }}</td>
                     <td>{{ professional.email }}</td>
-                    <td>{{ professional.status }}</td>
+                    <td>{{ 'Blocked' if professional.blocked else 'Active' }}</td>
                     <td>
-                        {% if professional.status == 'pending' %}
-                            <a href="{{ url_for('approve_professional', curr_login_id=data.curr_login_id, user_id=professional.id) }}" class="approve-btn">Approve</a>
-                            <a href="{{ url_for('disapprove_professional', curr_login_id=data.curr_login_id, user_id=professional.id) }}" class="disapprove-btn">Disapprove</a>
+                        {% if professional.blocked %}
+                        <form action="{{ url_for('unblock_user', curr_login_id=curr_login_id, user_id=professional.id) }}" method="POST">
+                            <button type="submit">Unblock</button>
+                        </form>
+                        {% else %}
+                        <form action="{{ url_for('block_user', curr_login_id=curr_login_id, user_id=professional.id) }}" method="POST">
+                            <button type="submit">Block</button>
+                        </form>
                         {% endif %}
                     </td>
                 </tr>
@@ -73,11 +85,11 @@
         </div>
 
         <!-- Services Management Section -->
-        <div class="section">
+        <div>
             <h2>Services Management</h2>
-            <a href="{{ url_for('create_service', curr_login_id=data.curr_login_id) }}" class="create-service-btn">Create New Service</a>
+            <a href="{{ url_for('create_service', curr_login_id=data.curr_login_id) }}">Create New Service</a>
             
-            <table>
+            <table border="1">
                 <tr>
                     <th>Service Name</th>
                     <th>Price</th>
@@ -90,8 +102,8 @@
                     <td>{{ service.price }}</td>
                     <td>{{ service.description }}</td>
                     <td>
-                        <a href="{{ url_for('edit_service', curr_login_id=data.curr_login_id, service_id=service.id) }}" class="edit-service-btn">Edit</a>
-                        <a href="{{ url_for('delete_service', curr_login_id=data.curr_login_id, service_id=service.id) }}" class="delete-service-btn">Delete</a>
+                        <a href="{{ url_for('edit_service', curr_login_id=data.curr_login_id, service_id=service.id) }}">Edit</a>
+                        <a href="{{ url_for('delete_service', curr_login_id=data.curr_login_id, service_id=service.id) }}">Delete</a>
                     </td>
                 </tr>
                 {% endfor %}

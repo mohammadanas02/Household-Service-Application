@@ -57,22 +57,26 @@ def login():
         user = User.query.filter(
             or_(User.username == username_or_email, User.email == username_or_email)).first()
 
-        if user and user.password == password:
-            session['user_id'] = user.id
-            session['role'] = user.role
+        if user:
+            if user.blocked:  # Check if the user is blocked
+                flash('Your account is blocked. Please contact the administrator.', 'warning')
+                return render_template('login.html')
+            elif user.password == password:
+                session['user_id'] = user.id
+                session['role'] = user.role
 
-            # Redirect based on role
-            if user.role == 'admin':
-                return redirect(url_for('admin_dashboard', curr_login_id=user.id))  # Pass curr_login_id here
-            elif user.role == 'professional':
-                return redirect(url_for('professional_dashboard',curr_login_id=user.id))
-            else:
-                return redirect(url_for('customer_dashboard',curr_login_id=user.id))
-        else:
-            flash('Invalid Username or Password', 'danger')
-            return render_template('login.html')
+                # Redirect based on role
+                if user.role == 'admin':
+                    return redirect(url_for('admin_dashboard', curr_login_id=user.id))  # Pass curr_login_id here
+                elif user.role == 'professional':
+                    return redirect(url_for('professional_dashboard', curr_login_id=user.id))
+                else:
+                    return redirect(url_for('customer_dashboard', curr_login_id=user.id))
+        flash('Invalid Username or Password', 'danger')
+        return render_template('login.html')
 
     return render_template('login.html')
+
 
 
 #---------------------------------------- Admin Dashboard----------------------------------------------#
@@ -169,42 +173,40 @@ def edit_service(curr_login_id, service_id):
 
     return render_template('edit_service.html', service=service, curr_login_id=curr_login_id)
 
-
-@app.route('/approve_professional/<int:curr_login_id>/<int:user_id>', methods=['GET'])
-def approve_professional(curr_login_id, user_id):
+@app.route('/block_user/<int:curr_login_id>/<int:user_id>', methods=['POST'])
+def block_user(curr_login_id, user_id):
     admin_user = User.query.get(curr_login_id)
     if not admin_user or admin_user.role != 'admin':
         flash('Unauthorized access', 'danger')
         return redirect(url_for('logout'))
 
-    professional = User.query.get(user_id)
-    if professional and professional.role == 'professional':
-        professional.status = 'approved'
+    user = User.query.get(user_id)
+    if user and not user.blocked:
+        user.blocked = True
         db.session.commit()
-        flash('Service professional approved.', 'success')
+        flash(f'{user.role.capitalize()} {user.username} has been blocked.', 'danger')
     else:
-        flash('Service professional not found or invalid role.', 'danger')
+        flash('Invalid action: User not found or already blocked.', 'danger')
 
     return redirect(url_for('admin_dashboard', curr_login_id=curr_login_id))
 
-
-
-@app.route('/disapprove_professional/<int:curr_login_id>/<int:user_id>', methods=['GET'])
-def disapprove_professional(curr_login_id, user_id):
-    user = User.query.get(curr_login_id)
-    if not user or user.role != 'admin':
+@app.route('/unblock_user/<int:curr_login_id>/<int:user_id>', methods=['POST'])
+def unblock_user(curr_login_id, user_id):
+    admin_user = User.query.get(curr_login_id)
+    if not admin_user or admin_user.role != 'admin':
         flash('Unauthorized access', 'danger')
         return redirect(url_for('logout'))
 
-    professional = User.query.get(user_id)
-    if professional and professional.role == 'professional':
-        professional.status = 'disapproved'
+    user = User.query.get(user_id)
+    if user and user.blocked:
+        user.blocked = False
         db.session.commit()
-        flash('Service professional disapproved.', 'danger')
+        flash(f'{user.role.capitalize()} {user.username} has been unblocked.', 'success')
     else:
-        flash('Professional not found or invalid role.', 'danger')
+        flash('Invalid action: User not found or not blocked.', 'danger')
 
-    return redirect(url_for('admin_dashboard', curr_login_id=user.id))
+    return redirect(url_for('admin_dashboard', curr_login_id=curr_login_id))
+
 
 
 # --------------------------------------- Customer Section ----------------------------------------- #
