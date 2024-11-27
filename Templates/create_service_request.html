@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Service Request</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <h1>Create Service Request for {{ service.name }}</h1>
@@ -14,17 +13,11 @@
             <label for="remarks">Remarks:</label>
             <textarea id="remarks" name="remarks" required></textarea>
         </div>
-
         <!-- New fields for contact number and pin code -->
         <div>
             <label for="contact_number">Contact Number:</label>
             <input type="text" id="contact_number" name="contact_number" required>
         </div>
-        <div>
-            <label for="pin_code">Pin Code:</label>
-            <input type="text" id="pin_code" name="pin_code" required>
-        </div>
-
         <div>
             <button type="submit">Create Request</button>
         </div>

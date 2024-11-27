@@ -1,15 +1,15 @@
-/* General page styles */
+/* Styles for general page */
 body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
     padding: 0;
-    background-color: #efefef;
-    color: #363636;
+    background-color: #eeebeb;
+    color: #282828;
 }
 
 /* Header styles */
 h1 {
-    color: #444;
+    color: #3e3e3e;
     text-align: center;
     margin-bottom: 20px;
 }
@@ -26,7 +26,6 @@ a {
     color: #004999;
     margin: 5px 10px;
 }
-
 
 /* Table styles */
 table {
@@ -49,7 +48,6 @@ tr:nth-child(even) {
     background-color: #f9f9f9;
 }
 
-
 /* Button styles */
 button {
     padding: 5px 10px;
@@ -57,37 +55,41 @@ button {
     background-color: #0066cc;
     color: white;
     border: none;
-    border-radius: 3px;
+    border-radius: 4px;
     cursor: pointer;
 }
 
+button:hover {
+    background-color: #00407c; 
+}
 
 /* Section spacing */
 div {
     margin-bottom: 20px;
 }
 
+/* Navbar styles */
 .navbar {
     display: flex;
-    justify-content: flex-start; /* Align links to the left */
-    background-color: #045ea3; /* Dark background for navbar */
-    padding: 10px 20px; /* Spacing around navbar items */
-    z-index: 1000; /* Ensure it's above other content */
+    justify-content: flex-start; 
+    background-color: #045ea3; 
+    padding: 10px 20px; 
+    z-index: 1000; 
     width: 100%;
     top: 0;
     left: 0;
 }
 
 .navbar a {
-    color: white; /* Link color */
-    text-decoration: none; /* Remove underline from links */
-    padding: 10px 15px; /* Spacing between links */
-    margin: 0 10px; /* Margin between each link */
-    font-size: 17px; /* Adjust font size */
-    border-radius: 5px; /* Rounded edges */
+    color: white; 
+    text-decoration: none; 
+    padding: 10px 15px; 
+    margin: 0 10px; 
+    font-size: 17px; 
+    border-radius: 5px; 
 }
 
-
+/* Button with .btn class */
 .btn {
     padding: 5px 10px;
     font-size: 14px;
@@ -99,5 +101,5 @@ div {
 }
 
 .btn:hover {
-    background-color: #004a8f; /* Darker shade for hover effect */
+    background-color: #00407c; /* Darker shade for hover effect */
 }

@@ -2,22 +2,22 @@
 <html lang="en">
 <head>
     <title>Customer Dashboard</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='customer_stylesS.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 
 <body>
-    <header>
-        <h1>Welcome, {{user.username}}</h1>
-        <nav>
-            <a href="{{ url_for('customer_dashboard', curr_login_id=curr_login_id) }}">Home</a>
-            <a href="{{ url_for('logout') }}">Logout</a>
-        </nav>
-    </header>
+    <div class="navbar">
+        <a href="{{ url_for('customer_dashboard', curr_login_id=curr_login_id) }}">Home</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+
+    <h1>Welcome, {{user.username}}</h1>
+
     <main>
         <!-- Section: Available Services -->
         <h2>Available Services</h2>
         <form action="{{ url_for('search_services', curr_login_id=curr_login_id) }}" method="POST">
-            <input type="text" name="search_query" placeholder="Search by name or location pin code" required>
+            <input type="text" name="search_query" placeholder="Search by name or description" required>
             <button type="submit">Search</button>
         </form>
         <table>
@@ -52,7 +52,7 @@
                     <th>Remarks</th>
                     <th>Status</th>
                     <th>Actions</th>
-                    <th>Edit</th> <!-- New column for editing -->
+                    <th>Options</th> 
                 </tr>
             </thead>
             <tbody>
@@ -79,8 +79,11 @@
                         {% endif %}
                     </td>
                     <td>
-                        <!-- Edit Button -->
-                        <a href="{{ url_for('edit_service_request', curr_login_id=curr_login_id, request_id=request.id) }}" class="btn btn-secondary">Edit</a>
+                        <!-- Edit and Delete Button -->
+                        <a href="{{ url_for('edit_service_request', curr_login_id=curr_login_id, request_id=request.id) }}"  class="btn btn-secondary">Edit</a>
+                        <form action="{{ url_for('delete_service_request', curr_login_id=curr_login_id, request_id=request.id) }}" method="POST" style="display: inline;">
+                            <button type="submit" class="btn btn-danger" >Delete</button>
+                        </form>
                     </td>
                 </tr>
                 {% endfor %}
@@ -96,6 +99,8 @@
                     <th>Remarks</th>
                     <th>Status</th>
                     <th>Date of Completion</th>
+                    <th>Feedback</th>
+                    <th>Rating</th>
                 </tr>
             </thead>
             <tbody>
@@ -105,6 +110,8 @@
                     <td>{{ request.remarks }}</td>
                     <td><span class="badge bg-success">Closed</span></td>
                     <td>{{ request.date_of_completion }}</td>
+                    <td>{{ request.feedback }}</td>
+                    <td>{{ request.rating }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

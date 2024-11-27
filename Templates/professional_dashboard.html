@@ -1,20 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='professional_dashboard.css') }}"> -->
     <title>Professional Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-
-    <div class="sidebar">
-        <!-- Logout section -->
-        <nav>
-            <a href="{{ url_for('logout') }}">Logout</a>
-        </nav>
-        <!-- Home Section -->
-        <nav>
-            <a href="{{ url_for('professional_dashboard', curr_login_id=curr_login_id) }}">Home</a>
-        </nav>
+    <div class="navbar">
+        <a href="{{ url_for('professional_dashboard', curr_login_id=curr_login_id) }}">Home</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
     </div>
 
     <div class="content">
@@ -28,7 +21,6 @@
                 <th>Service</th>
                 <th>Customer</th>
                 <th>Contact Number</th>
-                <th>Pin Code</th>
                 <th>Price</th>
                 <th>Remarks</th>
                 <th>Actions</th>
@@ -38,8 +30,7 @@
                 <td>{{ request.id }}</td>
                 <td>{{ request.service.name }}</td>
                 <td>{{ request.customer.username }}</td>
-                <td>{{ request.customer.contact_number }}</td>
-                <td>{{ request.customer.pin_code }}</td>
+                <td>{{ request.contact }}</td>
                 <td>{{ request.service.price }}</td>
                 <td>{{ request.remarks }}</td>
                 <td>
@@ -64,9 +55,9 @@
                 <th>Service</th>
                 <th>Customer</th>
                 <th>Contact Number</th>
-                <th>Pin Code</th>
                 <th>Status</th>
                 <th>Price</th>
+                <th>Remarks</th>
                 <th>Actions</th>
             </tr>
             {% for request in assigned_requests %}
@@ -74,10 +65,10 @@
                 <td>{{ request.id }}</td>
                 <td>{{ request.service.name }}</td>
                 <td>{{ request.customer.username }}</td>
-                <td>{{ request.customer.contact_number }}</td>
-                <td>{{ request.customer.pin_code }}</td>
+                <td>{{ request.contact }}</td>
                 <td>{{ request.status }}</td>
                 <td>{{ request.service.price }}</td>
+                <td>{{ request.remarks }}</td>
                 <td>
                     <form action="{{ url_for('mark_service_completed', curr_login_id=curr_login_id, request_id=request.id) }}" method="post">
                         <button type="submit">Verify</button>
@@ -99,6 +90,7 @@
                 <th>Request ID</th>
                 <th>Service</th>
                 <th>Customer</th>
+                <th>Contact Number</th>
                 <th>Date of Completion</th>
                 <th>Feedback</th>
                 <th>Rating</th>
@@ -108,8 +100,9 @@
                 <td>{{ request.id }}</td>
                 <td>{{ request.service.name }}</td>
                 <td>{{ request.customer.username }}</td>
+                <td>{{ request.contact }}</td>
                 <td>{{ request.date_of_completion }}</td>
-                <td>{{ request.remark }}</td>
+                <td>{{ request.feedback }}</td>
                 <td>{{ request.rating }}</td>
             </tr>
             {% endfor %}

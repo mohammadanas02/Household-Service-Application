@@ -1,10 +1,19 @@
-<form method="POST">
-    <div class="form-group">
-        <label for="remarks">Remarks</label>
-        <textarea id="remarks" name="remarks" class="form-control">{{ service_request.remarks }}</textarea>
-    </div>
-    <button type="submit" class="btn btn-primary">Update Service Request</button>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Edit Service request for {{service_request.service.name}}</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <form method="POST">
+        <div class="form-group">
+            <label for="remarks">Remarks</label>
+            <textarea id="remarks" name="remarks" class="form-control">{{ service_request.remarks }}</textarea>
+        </div>
+        <button type="submit" class="btn">Update Service Request</button>
+    </form>
+</body>
+
 
 
 

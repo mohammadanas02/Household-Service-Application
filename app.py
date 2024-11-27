@@ -35,7 +35,7 @@ def signup():
         username = request.form['username']
         email = request.form['email']
         password = request.form['password']
-        role = request.form['role']  # Get the role from the form
+        role = request.form['role']  
 
         try:
             user = User(username=username, email=email, password=password, role=role)
@@ -63,16 +63,16 @@ def login():
             or_(User.username == username_or_email, User.email == username_or_email)).first()
 
         if user:
-            if user.blocked:  # Check if the user is blocked
-                flash('Your account is blocked. Please contact the administrator.', 'warning')
+            if user.blocked:  # We are Checking if the user is blocked.
+                flash('You have been blocked!', 'Contact Admin.')
                 return render_template('login.html')
             elif user.password == password:
                 session['user_id'] = user.id
                 session['role'] = user.role
 
-                # Redirect based on role
+                # Redirectig based on role of the user.
                 if user.role == 'admin':
-                    return redirect(url_for('admin_dashboard', curr_login_id=user.id))  # Pass curr_login_id here
+                    return redirect(url_for('admin_dashboard', curr_login_id=user.id))  
                 elif user.role == 'professional':
                     return redirect(url_for('professional_dashboard', curr_login_id=user.id))
                 else:
@@ -94,11 +94,11 @@ def admin_dashboard(curr_login_id):
         flash('Unauthorized access', 'danger')
         return redirect(url_for('logout'))
 
-    # Fetch customers and professionals
+    # Fetching all customers and professionals fron the database by their filtering the roles.
     customers = User.query.filter_by(role='customer').all()
     professionals = User.query.filter_by(role='professional').all()
 
-    # Fetch services
+    # Fetching all the services.
     services = Service.query.all()
 
     data = {'curr_login_id': curr_login_id}
@@ -112,15 +112,15 @@ def admin_dashboard(curr_login_id):
 
 
 
-@app.route('/admin/stats/<int:curr_login_id>', methods=['GET'])
+@app.route('/admin_dashboard/admin/stats/<int:curr_login_id>', methods=['GET'])
 def admin_stats(curr_login_id):
-    # Ensure the logged-in user is an admin
+    # Cheaking if the logged in user is admin. 
     admin_user = User.query.get(curr_login_id)
     if not admin_user or admin_user.role != 'admin':
         flash('Unauthorized access', 'danger')
         return redirect(url_for('logout'))
 
-    # Fetch services
+    # Fetching services
     services = Service.query.all()
 
     # Data preparation for bar graph
@@ -150,7 +150,7 @@ def admin_stats(curr_login_id):
     return render_template('admin_stats.html', plot_url=plot_url)
 
 
-@app.route('/create_service/<int:curr_login_id>', methods=['GET', 'POST'])
+@app.route('/admin_dashboard/create_service/<int:curr_login_id>', methods=['GET', 'POST'])
 def create_service(curr_login_id):
     admin_user = User.query.get(curr_login_id)
     if not admin_user or admin_user.role != 'admin':
@@ -158,7 +158,7 @@ def create_service(curr_login_id):
         return redirect(url_for('logout'))
 
     if request.method == 'POST':
-        name = request.form['name']
+        name = request.form['name'] # Taking fields from service request form.
         price = request.form['price']
         description = request.form['description']
 
@@ -189,7 +189,7 @@ def delete_service(curr_login_id, service_id):
 
     return redirect(url_for('admin_dashboard', curr_login_id=curr_login_id))
 
-@app.route('/edit_service/<int:curr_login_id>/<int:service_id>', methods=['GET', 'POST'])
+@app.route('/admin_dashboard/edit_service/<int:curr_login_id>/<int:service_id>', methods=['GET', 'POST'])
 def edit_service(curr_login_id, service_id):
     admin_user = User.query.get(curr_login_id)
     if not admin_user or admin_user.role != 'admin':
@@ -202,7 +202,7 @@ def edit_service(curr_login_id, service_id):
         return redirect(url_for('admin_dashboard', curr_login_id=curr_login_id))
 
     if request.method == 'POST':
-        service.name = request.form['name']
+        service.name = request.form['name'] # reinstantiating fields fron edit page.
         service.price = request.form['price']
         service.description = request.form['description']
         db.session.commit()
@@ -223,9 +223,9 @@ def block_user(curr_login_id, user_id):
     if user and not user.blocked:
         user.blocked = True
         db.session.commit()
-        flash(f'{user.role.capitalize()} {user.username} has been blocked.', 'danger')
+        flash(f'You have blocked {user.username}')
     else:
-        flash('Invalid action: User not found or already blocked.', 'danger')
+        flash('User is not found or already blocked!')
 
     return redirect(url_for('admin_dashboard', curr_login_id=curr_login_id))
 
@@ -240,9 +240,9 @@ def unblock_user(curr_login_id, user_id):
     if user and user.blocked:
         user.blocked = False
         db.session.commit()
-        flash(f'{user.role.capitalize()} {user.username} has been unblocked.', 'success')
+        flash(f'You have Unblocked {user.username}')
     else:
-        flash('Invalid action: User not found or not blocked.', 'danger')
+        flash('User is not found or already blocked!')
 
     return redirect(url_for('admin_dashboard', curr_login_id=curr_login_id))
 
@@ -268,7 +268,7 @@ def customer_dashboard(curr_login_id):
                            service_requests=service_requests, 
                            curr_login_id=curr_login_id)
 
-@app.route('/search_services/<int:curr_login_id>', methods=['POST'])
+@app.route('/customer_dashboard/search_services/<int:curr_login_id>', methods=['POST'])
 def search_services(curr_login_id):
     user = User.query.get(curr_login_id)
     if not user or user.role != 'customer':
@@ -288,7 +288,7 @@ def search_services(curr_login_id):
                            services=services, 
                            query=search_query)
 
-@app.route('/create_service_request/<int:curr_login_id>/<int:service_id>', methods=['GET', 'POST'])
+@app.route('/customer_dashboard/create_service_request/<int:curr_login_id>/<int:service_id>', methods=['GET', 'POST'])
 def create_service_request(curr_login_id, service_id):
     customer = User.query.get(curr_login_id)
     if not customer or customer.role != 'customer':
@@ -297,11 +297,13 @@ def create_service_request(curr_login_id, service_id):
     
     if request.method == 'POST':
         remarks = request.form['remarks']
+        contact = request.form['contact_number']
         service_request = ServiceRequest(
             customer_id=curr_login_id,
             service_id=service_id,
             status='requested',
             remarks=remarks,
+            contact= contact,
             date_of_request=datetime.now()
         )
         db.session.add(service_request)
@@ -314,7 +316,7 @@ def create_service_request(curr_login_id, service_id):
                            service=service, 
                            curr_login_id=curr_login_id)
 
-@app.route('/edit_service_request/<int:curr_login_id>/<int:request_id>', methods=['GET', 'POST'])
+@app.route('/customer_dashboard/edit_service_request/<int:curr_login_id>/<int:request_id>', methods=['GET', 'POST'])
 def edit_service_request(curr_login_id, request_id):
     customer = User.query.get(curr_login_id)
     if not customer or customer.role != 'customer':
@@ -338,11 +340,28 @@ def edit_service_request(curr_login_id, request_id):
                            service_request=service_request, 
                            curr_login_id=curr_login_id)
 
+@app.route('/delete_service_request/<int:curr_login_id>/<int:request_id>', methods=['POST'])
+def delete_service_request(curr_login_id, request_id):
+    customer = User.query.get(curr_login_id)
+    if not customer or customer.role != 'customer':
+        flash('Unauthorized access', 'danger')
+        return redirect(url_for('logout'))
+
+    service_request = ServiceRequest.query.get(request_id)
+    if not service_request or service_request.customer_id != curr_login_id:
+        flash('Service request not found or you do not have permission to delete it.', 'danger')
+        return redirect(url_for('customer_dashboard', curr_login_id=curr_login_id))
+
+    # Delete the service request
+    db.session.delete(service_request)
+    db.session.commit()
+    flash('Service request deleted successfully!', 'success')
+    return redirect(url_for('customer_dashboard', curr_login_id=curr_login_id))
 
 
 
 
-@app.route('/close_service_request/<int:curr_login_id>/<int:request_id>', methods=['GET', 'POST'])
+@app.route('/customer_dashboard/close_service_request/<int:curr_login_id>/<int:request_id>', methods=['GET', 'POST'])
 def close_service_request(curr_login_id, request_id):
     customer = User.query.get(curr_login_id)
     if not customer or customer.role != 'customer':
@@ -356,17 +375,17 @@ def close_service_request(curr_login_id, request_id):
 
     if request.method == 'POST':
         # Capture remark and rating
-        remark = request.form.get('remark')
+        feedback = request.form.get('feedback')
         rating = int(request.form.get('rating', 0))  # Ensure rating is numeric
 
         # Validate the rating
-        if rating < 1 or rating > 5:
+        if rating < 0 or rating > 5:
             flash('Rating must be between 1 and 5.', 'danger')
             return redirect(url_for('close_service_request', curr_login_id=curr_login_id, request_id=request_id))
 
         # Update the service request with remark, rating, and status
         service_request.status = 'closed'
-        service_request.remark = remark
+        service_request.feedback = feedback
         service_request.rating = rating
         db.session.commit()
         flash('Service request closed successfully with feedback!', 'success')
@@ -442,6 +461,7 @@ def mark_service_completed(curr_login_id, request_id):
 
     # Redirect back to the professional dashboard
     return redirect(url_for('professional_dashboard', curr_login_id=curr_login_id))
+
 
 
 
