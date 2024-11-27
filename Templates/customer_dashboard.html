@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='customer_stylesS.css') }}">
 </head>
+
 <body>
     <header>
         <h1>Welcome, {{user.username}}</h1>
         <nav>
+            <a href="{{ url_for('customer_dashboard', curr_login_id=curr_login_id) }}">Home</a>
             <a href="{{ url_for('logout') }}">Logout</a>
         </nav>
     </header>
@@ -36,7 +36,7 @@
                     <td>{{ service.description }}</td>
                     <td>{{ service.price }}</td>
                     <td>
-                        <a href="{{ url_for('create_service_request', curr_login_id=curr_login_id, service_id=service.id) }}">Request Service</a>
+                        <a href="{{ url_for('create_service_request', curr_login_id=curr_login_id, service_id=service.id) }}" Class = 'btn'>Request Service</a>
                     </td>
                 </tr>
                 {% endfor %}

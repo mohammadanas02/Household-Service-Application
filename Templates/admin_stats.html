@@ -1,1 +1,17 @@
-<h1>This is admin stats page</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Stats</title>
+</head>
+<body>
+    <h1>Admin Stats</h1>
+
+    <!-- Displaying the Price vs Service Name column graph -->
+    <div>
+        <h3>Total Revenue vs Service Name</h3>
+        <img src="data:image/png;base64,{{ plot_url }}" alt="Price vs Service Name" />
+    </div>
+</body>
+</html>

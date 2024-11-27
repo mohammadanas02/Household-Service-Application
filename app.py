@@ -111,10 +111,6 @@ def admin_dashboard(curr_login_id):
                         data=data)
 
 
-import matplotlib.pyplot as plt
-import io
-import base64
-from matplotlib.ticker import MaxNLocator
 
 @app.route('/admin/stats/<int:curr_login_id>', methods=['GET'])
 def admin_stats(curr_login_id):

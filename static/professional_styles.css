@@ -1,0 +1,117 @@
+/* Body and general page styles */
+body {
+    font-family: 'Roboto', Arial, sans-serif;
+    background-color: #0a3351; /* Light blue background */
+    color: #333;
+    display: flex;
+    padding: 20px;
+    margin: 0;
+}
+
+/* Sidebar styles (left column) */
+.sidebar {
+    width: 200px;
+    background-color: #0a3351;
+    padding: 10px;
+    box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.sidebar nav {
+    margin: 10px 0;
+}
+
+.sidebar a {
+    color: #f72201; /* Hot pink links */
+    text-decoration: none;
+    font-size: 18px;
+    padding: 10px;
+    border-radius: 5px;
+    display: block;
+    margin: 5px 0;
+    border: 2px solid transparent;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.sidebar a:hover {
+    background-color: #f72201;
+    color: white;
+    border-color: #f72201; /* Border color on hover */
+}
+
+/* Content area styles (right column) */
+.content {
+    flex: 1;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    margin-left: 20px;
+}
+
+/* Header styles */
+h1 {
+    font-size: 28px;
+    color: #f72201; /* Hot pink text */
+    text-shadow: 2px 2px 5px #474544; /* Glowy text shadow */
+    margin-bottom: 20px;
+}
+
+/* Table styles */
+table {
+    width: 90%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    border: 1px solid #f72201;
+}
+
+th, td {
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #f72201;
+}
+
+th {
+    background-color: #0a3351;
+    color: white;
+}
+
+td {
+    background-color: #abc2cd; /* Light pink background for table rows */
+}
+
+tr:hover {
+    background-color: #e0c5c5; /* Light hover effect */
+}
+
+/* Form button styles */
+button {
+    background-color: #0a3351;
+    color: white;
+    font-size: 16px;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #f72201;
+}
+
+/* Empty state table row */
+td[colspan="7"], td[colspan="8"], td[colspan="6"] {
+    text-align: center;
+    font-style: italic;
+    color: #555;
+}
+
+/* Additional Section Styling */
+h2 {
+    font-size: 24px;
+    color: #f72201;
+    text-shadow: 1px 1px 3px #474544; /* Glowy text shadow */
+    margin-bottom: 15px;
+}

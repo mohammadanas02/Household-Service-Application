@@ -29,7 +29,7 @@ class Service(db.Model):
 
     # Relationships
     service_professionals = db.relationship('ServiceProfessional', backref='service', lazy=True)
-    service_requests = db.relationship('ServiceRequest', backref='service', lazy=True)
+    service_requests = db.relationship('ServiceRequest', backref='service', lazy=True, cascade="all, delete-orphan")
 
 class ServiceProfessional(db.Model):
     __tablename__ = 'service_professionals'
