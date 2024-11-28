@@ -4,10 +4,8 @@ from Model.model import *
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime
 import matplotlib.pyplot as plt
-from matplotlib.ticker import MaxNLocator
 import io
 import base64
-from flask import Response
 
 
 app = Flask(__name__)
@@ -22,7 +20,7 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
-#------------------------------------ Login Logout and Signup form-------------------------------------#
+#------------------------------------ Login and Signup form-------------------------------------#
 
 @app.route("/", methods=["GET"])
 def home():
