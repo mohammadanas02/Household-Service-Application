@@ -252,30 +252,31 @@ def unblock_user(curr_login_id, user_id):
 
 @app.route('/customer_dashboard/<int:curr_login_id>', methods=['GET'])
 def customer_dashboard(curr_login_id):
-    user = User.query.get(curr_login_id)
-    if not user or user.role != 'customer':
-        flash('Unauthorized access', 'danger')
+    customer = User.query.get(curr_login_id)
+    if not customer or customer.role != 'customer' or customer.blocked:
+        flash('Unauthorized access or You have been blocked by the admin')
         return redirect(url_for('logout'))
     
-    # Fetch all available services for the customer
+    # Fetching all available services craeted by admin for the customer.
     services = Service.query.all()
-    # Fetch all service requests related to the current customer, including their current status
+    # Fetch all service requests related to the current customer, including their current status.
     service_requests = ServiceRequest.query.filter_by(customer_id=curr_login_id).all()
 
     return render_template('customer_dashboard.html',
-                           user=user, 
+                           customer=customer, 
                            services=services, 
                            service_requests=service_requests, 
                            curr_login_id=curr_login_id)
 
 @app.route('/customer_dashboard/search_services/<int:curr_login_id>', methods=['POST'])
 def search_services(curr_login_id):
-    user = User.query.get(curr_login_id)
-    if not user or user.role != 'customer':
-        flash('Unauthorized access', 'danger')
+    customer = User.query.get(curr_login_id)
+    if not customer or customer.role != 'customer' or customer.blocked:
+        flash('Unauthorized access or You have been blocked by the admin')
         return redirect(url_for('logout'))
     
     search_query = request.form['search_query']
+    # Search on the basis of service name or description.
     services = Service.query.filter(
         or_(
             Service.name.ilike(f'%{search_query}%'),
@@ -291,10 +292,11 @@ def search_services(curr_login_id):
 @app.route('/customer_dashboard/create_service_request/<int:curr_login_id>/<int:service_id>', methods=['GET', 'POST'])
 def create_service_request(curr_login_id, service_id):
     customer = User.query.get(curr_login_id)
-    if not customer or customer.role != 'customer':
-        flash('Unauthorized access', 'danger')
+    if not customer or customer.role != 'customer' or customer.blocked:
+        flash('Unauthorized access or You have been blocked by the admin')
         return redirect(url_for('logout'))
     
+    # Taking remarks for the requested service and contact number of the customer.
     if request.method == 'POST':
         remarks = request.form['remarks']
         contact = request.form['contact_number']
@@ -319,8 +321,8 @@ def create_service_request(curr_login_id, service_id):
 @app.route('/customer_dashboard/edit_service_request/<int:curr_login_id>/<int:request_id>', methods=['GET', 'POST'])
 def edit_service_request(curr_login_id, request_id):
     customer = User.query.get(curr_login_id)
-    if not customer or customer.role != 'customer':
-        flash('Unauthorized access', 'danger')
+    if not customer or customer.role != 'customer' or customer.blocked:
+        flash('Unauthorized access or You have been blocked by the admin')
         return redirect(url_for('logout'))
 
     service_request = ServiceRequest.query.get(request_id)
@@ -329,7 +331,7 @@ def edit_service_request(curr_login_id, request_id):
         return redirect(url_for('customer_dashboard', curr_login_id=curr_login_id))
 
     if request.method == 'POST':
-        # Update the service request remarks if provided
+        # Update remarks for the service request.
         remarks = request.form['remarks']
         service_request.remarks = remarks
         db.session.commit()
@@ -343,8 +345,8 @@ def edit_service_request(curr_login_id, request_id):
 @app.route('/delete_service_request/<int:curr_login_id>/<int:request_id>', methods=['POST'])
 def delete_service_request(curr_login_id, request_id):
     customer = User.query.get(curr_login_id)
-    if not customer or customer.role != 'customer':
-        flash('Unauthorized access', 'danger')
+    if not customer or customer.role != 'customer' or customer.blocked:
+        flash('Unauthorized access or You have been blocked by the admin')
         return redirect(url_for('logout'))
 
     service_request = ServiceRequest.query.get(request_id)
@@ -352,7 +354,7 @@ def delete_service_request(curr_login_id, request_id):
         flash('Service request not found or you do not have permission to delete it.', 'danger')
         return redirect(url_for('customer_dashboard', curr_login_id=curr_login_id))
 
-    # Delete the service request
+    # Deleting service request made by the customer.
     db.session.delete(service_request)
     db.session.commit()
     flash('Service request deleted successfully!', 'success')
@@ -364,34 +366,33 @@ def delete_service_request(curr_login_id, request_id):
 @app.route('/customer_dashboard/close_service_request/<int:curr_login_id>/<int:request_id>', methods=['GET', 'POST'])
 def close_service_request(curr_login_id, request_id):
     customer = User.query.get(curr_login_id)
-    if not customer or customer.role != 'customer':
-        flash('Unauthorized access', 'danger')
+    if not customer or customer.role != 'customer' or customer.blocked:
+        flash('Unauthorized access or You have been blocked by the admin')
         return redirect(url_for('logout'))
 
     service_request = ServiceRequest.query.get(request_id)
     if not service_request or service_request.customer_id != curr_login_id or service_request.status != 'completed':
-        flash('Service request not found or cannot be closed.', 'danger')
+        flash('Service request not found or cannot be closed.')
         return redirect(url_for('customer_dashboard', curr_login_id=curr_login_id))
 
     if request.method == 'POST':
-        # Capture remark and rating
+        # Capture Feedback and ratings( in numeric) given by the customer.
         feedback = request.form.get('feedback')
-        rating = int(request.form.get('rating', 0))  # Ensure rating is numeric
+        rating = int(request.form.get('rating', 0))  
 
         # Validate the rating
-        if rating < 0 or rating > 5:
-            flash('Rating must be between 1 and 5.', 'danger')
+        if rating < 1 or rating > 5:
+            flash('Rating must be in between 1 and 5.', 'danger')
             return redirect(url_for('close_service_request', curr_login_id=curr_login_id, request_id=request_id))
 
-        # Update the service request with remark, rating, and status
+        # Updating the service request with feedback, ratings, and status
         service_request.status = 'closed'
         service_request.feedback = feedback
         service_request.rating = rating
         db.session.commit()
-        flash('Service request closed successfully with feedback!', 'success')
+        flash('Service request closed successfully with feedback!')
         return redirect(url_for('customer_dashboard', curr_login_id=curr_login_id))
 
-    # Render the close service request form
     return render_template('close_service_request.html', service_request=service_request, curr_login_id=curr_login_id)
 
 
@@ -401,18 +402,16 @@ def close_service_request(curr_login_id, request_id):
 
 @app.route('/professional_dashboard/<int:curr_login_id>', methods=['GET'])
 def professional_dashboard(curr_login_id):
-    # Fetch the professional user
     professional = User.query.get(curr_login_id)
-    if not professional or professional.role != 'professional':
-        flash('Unauthorized access', 'danger')
+    if not professional or professional.role != 'professional' or professional.blocked:
+        flash('Unauthorized access or You have been blocked by the admin')
         return redirect(url_for('logout'))
 
-    # Fetch service requests
+    # Fetching all the service requests based on status.
     open_requests = ServiceRequest.query.filter_by(status='requested').all()
     assigned_requests = ServiceRequest.query.filter_by(status='assigned', professional_id=curr_login_id).all()
     closed_requests = ServiceRequest.query.filter_by(status='closed', professional_id=curr_login_id).all()
 
-    # Pass the professional object to the template
     return render_template('professional_dashboard.html',
                            professional=professional,
                            open_requests=open_requests,
@@ -425,8 +424,8 @@ def professional_dashboard(curr_login_id):
 @app.route('/accept_service_request/<int:curr_login_id>/<int:request_id>', methods=['POST'])
 def accept_service_request(curr_login_id, request_id):
     professional = User.query.get(curr_login_id)
-    if not professional or professional.role != 'professional':
-        flash('Unauthorized access', 'danger')
+    if not professional or professional.role != 'professional' or professional.blocked:
+        flash('Unauthorized access or You have been blocked by the admin')
         return redirect(url_for('logout'))
 
     service_request = ServiceRequest.query.get(request_id)
@@ -435,31 +434,29 @@ def accept_service_request(curr_login_id, request_id):
         service_request.professional_id = curr_login_id
         service_request.status = 'assigned'
         db.session.commit()
-        flash('Service request accepted successfully!', 'success')
+        flash('Service request accepted successfully!')
     else:
-        flash('Service request not found or already assigned.', 'danger')
+        flash('Service request not found or already assigned.')
 
-    # Redirect back to the professional dashboard instead of a separate service request view page
     return redirect(url_for('professional_dashboard', curr_login_id=curr_login_id))
 
 @app.route('/mark_service_completed/<int:curr_login_id>/<int:request_id>', methods=['POST'])
 def mark_service_completed(curr_login_id, request_id):
     professional = User.query.get(curr_login_id)
-    if not professional or professional.role != 'professional':
-        flash('Unauthorized access', 'danger')
+    if not professional or professional.role != 'professional' or professional.blocked:
+        flash('Unauthorized access or You have been blocked by the admin')
         return redirect(url_for('logout'))
 
     service_request = ServiceRequest.query.get(request_id)
     if service_request and service_request.status == 'assigned' and service_request.professional_id == curr_login_id:
-        # Update the status of the service request to 'completed'
+        # Updating the status of the service request to 'completed'.
         service_request.status = 'completed'
-        service_request.date_of_completion = datetime.now()
+        service_request.date_of_completion = datetime.now() # fetching date and time of completion.
         db.session.commit()
-        flash('Service marked as completed successfully!', 'success')
+        flash('Service marked as completed successfully!')
     else:
-        flash('Service request not found or cannot be marked as completed.', 'danger')
+        flash('Service request not found or cannot be marked as completed.')
 
-    # Redirect back to the professional dashboard
     return redirect(url_for('professional_dashboard', curr_login_id=curr_login_id))
 
 
