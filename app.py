@@ -12,7 +12,7 @@ from flask import Response
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'East'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///grocery.sqlite3'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///householdservice.sqlite3'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_SILENCE_UBER_WARNING'] = 1
 
