@@ -118,14 +118,13 @@ def admin_stats(curr_login_id):
         flash('Unauthorized access', 'danger')
         return redirect(url_for('logout'))
 
-    # Fetching services
     services = Service.query.all()
 
     # Data preparation for bar graph
     service_names = [service.name for service in services]
     prices = [service.price for service in services]
 
-    # Create a column graph (vertical bars)
+    # vertical bar graph.
     fig, ax = plt.subplots(figsize=(10, 6))
     ax.bar(service_names, prices, color='skyblue')
     ax.set_xlabel('Service Name')
@@ -144,7 +143,6 @@ def admin_stats(curr_login_id):
     # Encode the image to a base64 string
     plot_url = base64.b64encode(img.getvalue()).decode('utf8')
 
-    # Pass the plot_url to the template
     return render_template('admin_stats.html', plot_url=plot_url)
 
 
